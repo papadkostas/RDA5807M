@@ -11,14 +11,14 @@
 #include "stm32_ub_lcd_ili9341.h"
 #include "stm32_ub_font.h"
 #include "stm32_ub_i2c3.h"
-#include "stm32_ub_led.h"
 #include <stdio.h>
 
 //--------------------------------------------------------------
 // Global Functions
 //--------------------------------------------------------------
-int RDA5807_WriteAll();
-int RDA5807_WriteReg(uint8_t reg);
+
+int8_t RDA5807_Init();
+int8_t RDA5807_PowerToogle();
 
 //--------------------------------------------------------------
 // Definitions
@@ -26,7 +26,7 @@ int RDA5807_WriteReg(uint8_t reg);
 #define RDAaddress 0x10
 
 /* Register 0x00H (16Bits) */
-#define RDA_CHIP_ID     0xFF00
+#define RDA_CHIP_ID     0x0058
 
 /* Register 0x02H (16Bits) */
 #define RDA_DHIZ        0x8000
@@ -53,7 +53,6 @@ int RDA5807_WriteReg(uint8_t reg);
 //--------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------
-int status;
 
 //--------------------------------------------------------------
 #endif // __RDA5807M_H
