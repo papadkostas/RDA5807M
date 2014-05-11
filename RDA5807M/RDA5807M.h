@@ -16,14 +16,30 @@
 //--------------------------------------------------------------
 // Global Functions
 //--------------------------------------------------------------
-
-int8_t RDA5807_Init();
-int8_t RDA5807_PowerToogle();
+void RDA5807_Dump(void);
+int8_t RDA5807_Init(void);
+int8_t RDA5807_Read(void);
+int8_t RDA5807_Reset(void);
+int8_t RDA5807_PowerOn(void);
+int8_t RDA5807_PowerOff(void);
+int8_t RDA5807_Mute(void);
+int8_t RDA5807_Mono(void);
+int8_t RDA5807_Softmute(void);
+int8_t RDA5807_SoftBlend(void);
+int8_t RDA5807_BassBoost(void);
+int8_t RDA5807_Volume(uint8_t volume);
+int8_t RDA5807_SeekUp(void);
+int8_t RDA5807_SeekDown(void);
+int8_t RDA5807_Frequency(float Freq);
 
 //--------------------------------------------------------------
 // Definitions
 //--------------------------------------------------------------
 #define RDAaddress 0x10
+
+#define StartingFreq 	87.000
+#define EndingFreq 		108.00
+#define DefaultFreq		90.80
 
 /* Register 0x00H (16Bits) */
 #define RDA_CHIP_ID     0x0058
@@ -53,6 +69,8 @@ int8_t RDA5807_PowerToogle();
 //--------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------
+int8_t RDAstatus;
+unsigned int RDA5807M_WriteReg[8],RDA5807M_ReadReg[7];
 
 //--------------------------------------------------------------
 #endif // __RDA5807M_H

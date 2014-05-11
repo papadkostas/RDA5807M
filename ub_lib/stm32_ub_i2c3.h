@@ -19,7 +19,7 @@
 //--------------------------------------------------------------
 // MultiByte defines
 //--------------------------------------------------------------
-#define    I2C3_MULTIBYTE_ANZ   12        // anzahl der Bytes
+#define    I2C3_MULTIBYTE_ANZ   16        // anzahl der Bytes
 uint8_t    I2C3_DATA[I2C3_MULTIBYTE_ANZ]; // Array
 
 
