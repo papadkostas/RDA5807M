@@ -8,10 +8,8 @@
 //--------------------------------------------------------------
 // Includes
 //--------------------------------------------------------------
-#include "stm32_ub_lcd_ili9341.h"
-#include "stm32_ub_font.h"
-#include "stm32_ub_i2c3.h"
 #include <stdio.h>
+#include "stm32_ub_i2c3.h"
 
 //--------------------------------------------------------------
 // Global Functions
@@ -37,9 +35,9 @@ int8_t RDA5807_Frequency(float Freq);
 //--------------------------------------------------------------
 #define RDAaddress 0x10
 
-#define StartingFreq 	87.000
+#define StartingFreq 	87.005
 #define EndingFreq 		108.00
-#define DefaultFreq		90.80
+#define DefaultFreq		102.60
 
 /* Register 0x00H (16Bits) */
 #define RDA_CHIP_ID     0x0058
@@ -69,7 +67,8 @@ int8_t RDA5807_Frequency(float Freq);
 //--------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------
-int8_t RDAstatus;
+//
+float CurrentFreq;
 unsigned int RDA5807M_WriteReg[8],RDA5807M_ReadReg[7];
 
 //--------------------------------------------------------------

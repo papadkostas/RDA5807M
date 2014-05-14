@@ -1,1 +1,1 @@
-BH 1750 Light Sensor Project for Eclipse Based IDE for STM32F429-Discovery Board
+CoIDE project for RDA5807M using STM32F4-29-Discovery Board

@@ -2,10 +2,11 @@
 //--------------------------------------------------------------
 // Local Variables
 //--------------------------------------------------------------
-float CurrentFreq;
-int rssi,volume;
-unsigned int RDA5807M_WriteRegDef[6] ={0xD00D,0x0000,0x1480,0x84D3,0x4000,0x0000};
 
+int rssi,volume;
+unsigned int RDA5807M_WriteRegDef[6] ={0xD00C,0x0000,0x1480,0x84DF,0x4000,0x0000};
+int8_t RDA5807_WriteReg(uint8_t address,uint16_t data);
+int RDAstatus = 0;
 int8_t RDA5807_WriteAll(){
 	int i,x = 0;
 	for(i=0; i<12; i=i+2){
@@ -44,7 +45,7 @@ int8_t RDA5807_PowerOn(){
 
 int8_t RDA5807_PowerOff(){
 	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] ^ 0x01;
-	return RDAstatus = RDA5807_WriteReg(0x01,RDA5807M_WriteReg[0]);
+	return RDAstatus = RDA5807_WriteAll();
 }
 
 int8_t RDA5807_Reset(){
