@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 
 int rssi,volume;
-unsigned int RDA5807M_WriteRegDef[6] ={0xD00C,0x0000,0x1480,0x84DF,0x4000,0x0000};
+unsigned int RDA5807M_WriteRegDef[6] ={0xC00C,0x26D0,0x1480,0x84D4,0x4000,0x0000};
 int8_t RDA5807_WriteReg(uint8_t address,uint16_t data);
 int RDAstatus = 0;
 int8_t RDA5807_WriteAll(){
@@ -32,6 +32,7 @@ int8_t RDA5807_Init(){
 	for(i=0; i<6; i++){
 		RDA5807M_WriteReg[i] = RDA5807M_WriteRegDef[i];
 	}
+	RDAstatus = RDA5807_Volume(StartingVolume);
 	return RDAstatus = RDA5807_Frequency(DefaultFreq);
 }
 
@@ -56,14 +57,14 @@ int8_t RDA5807_Reset(){
 
 int8_t RDA5807_Volume(uint8_t vol){
 	if(vol > 15){
-		volume = 15;
+		vol = 15;
 		return 1;			//Volume is already at 15 level
 	}
 	if(vol < 0){
-		volume = 0;
+		vol = 0;
 		return 2;			//Volume is already at 0 level
 	}
-	RDA5807M_WriteReg[3] = (RDA5807M_WriteReg[3] & 0xFFF0)| volume;   // Set New Volume
+	RDA5807M_WriteReg[3] = (RDA5807M_WriteReg[3] & 0xFFF0)| vol;   // Set New Volume
 	return RDAstatus = RDA5807_WriteAll();
 }
 
@@ -134,11 +135,12 @@ int8_t RDA5807_SeekDown(){
 
 int8_t RDA5807_Frequency(float Freq){
 	int Channel;
-	CurrentFreq = Freq;
 	Channel = (Freq-StartingFreq)/0.1;
 	Channel = Channel & 0x03FF;
 	RDA5807M_WriteReg[1] = Channel*64 +0x10;  // Channel + TUNE-Bit + Band=00(87-108) + Space=00(100kHz)
-	return RDAstatus = RDA5807_WriteAll();
+	RDAstatus = RDA5807_WriteAll();
+	RDA5807M_WriteReg[1] = RDA5807M_WriteReg[1] & 0xFFEF;
+	return RDAstatus;
 }
 
 int8_t RDA5807_RDS(){
@@ -164,12 +166,18 @@ int8_t RDA5807_Read(){
 		RDA5807M_ReadReg[x] = RDA5807M_ReadReg[x] | I2C3_DATA[i];
 		x++;
 	}
+	rdsready = RDA5807M_ReadReg[0] & 0x8000;					//if rdsready = 8000 rds data are ready
+	tuneok = RDA5807M_ReadReg[0] & 0x4000;						//if tuneok = 4000 seek/tune completed
+	nochannel = RDA5807M_ReadReg[0] & 0x2000;					//if nochannel = 2000 no channel found
+	rdssynchro = RDA5807M_ReadReg[0] & 0x1000;					//if rdssynchro = 1000 rds decoder syncrhonized
+	stereo = RDA5807M_ReadReg[0] & 0x0400; 						//if stereo = 400 station is stereo
+	freq = (((RDA5807M_ReadReg[0] & 0x03FF) * 100) + 87000);	//return freq ex 102600KHz > 102.6MHz
+	signal = RDA5807M_ReadReg[1] & 0xFC00;						//return signal strength rssi
+	fmready = RDA5807M_ReadReg[1] & 0x0008; 					//if fmready = 8 > fm is ready
+	fmstation = RDA5807M_ReadReg[1] & 0x0100; 					//if fmstation = 100 fm station is true
+	rdsblockerror = RDA5807M_ReadReg[1] & 0x000C;				//check for rds blocks errors
+																//00= 0 errors,01= 1~2 errors requiring correction
+																//10= 3~5 errors requiring correction
+																//11= 6+ errors or error in checkword, correction not possible.
 	return RDAstatus;
-}
-
-void RDA5807_Dump(){
-	uint8_t i;
-	for(i=0; i<6; i++){
-		//RDA5807M_WriteReg[i] = dump[i];
-	}
 }

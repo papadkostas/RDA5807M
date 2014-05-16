@@ -29,15 +29,17 @@ int8_t RDA5807_Volume(uint8_t volume);
 int8_t RDA5807_SeekUp(void);
 int8_t RDA5807_SeekDown(void);
 int8_t RDA5807_Frequency(float Freq);
+int RDA5807_Channel(void);
 
 //--------------------------------------------------------------
 // Definitions
 //--------------------------------------------------------------
 #define RDAaddress 0x10
 
-#define StartingFreq 	87.005
+#define StartingFreq 	87.000
 #define EndingFreq 		108.00
 #define DefaultFreq		102.60
+#define StartingVolume 	0x4
 
 /* Register 0x00H (16Bits) */
 #define RDA_CHIP_ID     0x0058
@@ -68,7 +70,16 @@ int8_t RDA5807_Frequency(float Freq);
 // Global Variables
 //--------------------------------------------------------------
 //
-float CurrentFreq;
+uint8_t rdsready;
+uint8_t tuneok;
+uint8_t nochannel;
+uint8_t rdssynchro;
+uint8_t stereo;
+int freq;
+uint8_t signal;
+uint8_t fmready;
+uint8_t fmstation;
+uint8_t rdsblockerror;
 unsigned int RDA5807M_WriteReg[8],RDA5807M_ReadReg[7];
 
 //--------------------------------------------------------------
