@@ -19,11 +19,10 @@
 */
 
 // USER START (Optionally insert additional includes)
+#include "RDA5807M.h"
 // USER END
 
 #include "DIALOG.h"
-#include <math.h>
-#include "RDA5807M.h"
 
 /*********************************************************************
 *
@@ -413,16 +412,31 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 *
 *       CreateWindow
 */
-/*
-WM_HWIN CreateWindow(void);
-WM_HWIN CreateWindow(void) {
+WM_HWIN CreateWindow(void){
   WM_HWIN hWin;
 
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
   return hWin;
 }
-*/
+
 // USER START (Optionally insert additional public code)
+
+void MainTask(void){
+	WM_HWIN hDlg;
+	BUTTON_SetDefaultSkin   (BUTTON_SKIN_FLEX);
+	CHECKBOX_SetDefaultSkin (CHECKBOX_SKIN_FLEX);
+	SPINBOX_SetDefaultSkin   (SPINBOX_SKIN_FLEX);
+	WIDGET_SetDefaultEffect(&WIDGET_Effect_Simple);
+	WM_SetCreateFlags(WM_CF_MEMDEV);
+	GUI_CURSOR_Show();
+	// Call creation function for the dialog
+	hDlg = CreateWindow();
+	// Keep program alive
+	while (1) {
+		GUI_Delay(10);
+	}
+}
+
 // USER END
 
 /*************************** End of file ****************************/
