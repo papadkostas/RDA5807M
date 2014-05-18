@@ -20,6 +20,7 @@ int8_t RDA5807_Read(void);
 int8_t RDA5807_Reset(void);
 int8_t RDA5807_PowerOn(void);
 int8_t RDA5807_PowerOff(void);
+int8_t RDA5807_RDS(void);
 int8_t RDA5807_Mute(void);
 int8_t RDA5807_Mono(void);
 int8_t RDA5807_Softmute(void);
@@ -34,7 +35,8 @@ int RDA5807_Channel(void);
 //--------------------------------------------------------------
 // Definitions
 //--------------------------------------------------------------
-#define RDAaddress 0x10
+#define RDASequential 	0x10
+#define RDARandom  		0x11
 
 #define StartingFreq 	87.000
 #define EndingFreq 		108.00
@@ -70,17 +72,17 @@ int RDA5807_Channel(void);
 // Global Variables
 //--------------------------------------------------------------
 //
-uint8_t rdsready;
-uint8_t tuneok;
-uint8_t nochannel;
-uint8_t rdssynchro;
-uint8_t stereo;
+int rdsready;
+int tuneok;
+int nochannel;
+int rdssynchro;
+int stereo;
 int freq;
-uint8_t signal;
-uint8_t fmready;
-uint8_t fmstation;
-uint8_t rdsblockerror;
-unsigned int RDA5807M_WriteReg[8],RDA5807M_ReadReg[7];
+int signal;
+int fmready;
+int fmstation;
+int rdsblockerror;
+unsigned int RDA5807M_WriteReg[8],RDA5807M_ReadReg[7],RDA5807M_RDS[32];
 
 //--------------------------------------------------------------
 #endif // __RDA5807M_H

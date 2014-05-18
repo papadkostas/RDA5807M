@@ -19,7 +19,7 @@
 */
 
 // USER START (Optionally insert additional includes)
-#include "RDA5807M.h"
+#include "RDA5807MemWin.h"
 // USER END
 
 #include "DIALOG.h"
@@ -30,21 +30,31 @@
 *
 **********************************************************************
 */
-#define ID_WINDOW_0 (GUI_ID_USER + 0x17)
-#define ID_BUTTON_0 (GUI_ID_USER + 0x18)
-#define ID_BUTTON_1 (GUI_ID_USER + 0x19)
-#define ID_BUTTON_2 (GUI_ID_USER + 0x1C)
-#define ID_BUTTON_3 (GUI_ID_USER + 0x1D)
-#define ID_CHECKBOX_0 (GUI_ID_USER + 0x1F)
-#define ID_TEXT_0 (GUI_ID_USER + 0x20)
-#define ID_TEXT_1 (GUI_ID_USER + 0x21)
-#define ID_TEXT_2 (GUI_ID_USER + 0x22)
-#define ID_SPINBOX_0 (GUI_ID_USER + 0x24)
-#define ID_SPINBOX_1 (GUI_ID_USER + 0x25)
-#define ID_CHECKBOX_1 (GUI_ID_USER + 0x26)
-#define ID_CHECKBOX_2 (GUI_ID_USER + 0x27)
-
-
+#define ID_WINDOW_0 (GUI_ID_USER + 0x00)
+#define ID_TEXT_0 (GUI_ID_USER + 0x01)
+#define ID_SPINBOX_0 (GUI_ID_USER + 0x02)
+#define ID_TEXT_1 (GUI_ID_USER + 0x03)
+#define ID_SPINBOX_1 (GUI_ID_USER + 0x04)
+#define ID_BUTTON_0 (GUI_ID_USER + 0x05)
+#define ID_BUTTON_1 (GUI_ID_USER + 0x06)
+#define ID_CHECKBOX_0 (GUI_ID_USER + 0x07)
+#define ID_CHECKBOX_1 (GUI_ID_USER + 0x08)
+#define ID_CHECKBOX_2 (GUI_ID_USER + 0x09)
+#define ID_BUTTON_2 (GUI_ID_USER + 0x0A)
+#define ID_BUTTON_3 (GUI_ID_USER + 0x0B)
+#define ID_TEXT_2 (GUI_ID_USER + 0x0C)
+#define ID_TEXT_3 (GUI_ID_USER + 0x0D)
+#define ID_TEXT_4 (GUI_ID_USER + 0x0E)
+#define ID_TEXT_5 (GUI_ID_USER + 0x0F)
+#define ID_TEXT_6 (GUI_ID_USER + 0x10)
+#define ID_TEXT_7 (GUI_ID_USER + 0x11)
+#define ID_TEXT_8 (GUI_ID_USER + 0x12)
+#define ID_TEXT_9 (GUI_ID_USER + 0x13)
+#define ID_TEXT_10 (GUI_ID_USER + 0x14)
+#define ID_TEXT_11 (GUI_ID_USER + 0x15)
+#define ID_TEXT_12 (GUI_ID_USER + 0x16)
+#define ID_TEXT_13 (GUI_ID_USER + 0x17)
+#define ID_TEXT_14 (GUI_ID_USER + 0x18)
 // USER START (Optionally insert additional defines)
 // USER END
 
@@ -63,19 +73,31 @@
 *       _aDialogCreate
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-	{ WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 240, 320, 0, 0x0, 0 },
-	{ BUTTON_CreateIndirect, "power", ID_BUTTON_0, 155, 5, 80, 25, 0, 0x0, 0 },
-	{ BUTTON_CreateIndirect, "reset", ID_BUTTON_1, 183, 35, 50, 25, 0, 0x0, 0 },
-	{ BUTTON_CreateIndirect, "seekdown", ID_BUTTON_2, 5, 240, 80, 30, 0, 0x0, 0 },
-	{ BUTTON_CreateIndirect, "seekup", ID_BUTTON_3, 90, 240, 80, 30, 0, 0x0, 0 },
-	{ CHECKBOX_CreateIndirect, "mute", ID_CHECKBOX_0, 175, 290, 65, 20, 0, 0x0, 0 },
-	{ TEXT_CreateIndirect, "tittle", ID_TEXT_0, 5, 5, 125, 20, 0, 0x64, 0 },
-	{ TEXT_CreateIndirect, "text1", ID_TEXT_1, 5, 35, 80, 20, 0, 0x64, 0 },
-	{ TEXT_CreateIndirect, "text2", ID_TEXT_2, 85, 35, 90, 20, 0, 0x64, 0 },
-	{ SPINBOX_CreateIndirect, "channel", ID_SPINBOX_0, 5, 280, 80, 30, 0, 0x0, 0 },
-	{ SPINBOX_CreateIndirect, "volume", ID_SPINBOX_1, 90, 280, 80, 30, 0, 0x0, 0 },
-	{ CHECKBOX_CreateIndirect, "bass", ID_CHECKBOX_1, 175, 265, 65, 20, 0, 0x0, 0 },
-	{ CHECKBOX_CreateIndirect, "rds", ID_CHECKBOX_2, 175, 240, 80, 20, 0, 0x0, 0 },
+  { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 240, 320, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "frequency1", ID_TEXT_0, 5, 300, 80, 20, 0, 0x64, 0 },
+  { SPINBOX_CreateIndirect, "frequency_spin", ID_SPINBOX_0, 5, 270, 80, 30, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "volume", ID_TEXT_1, 90, 300, 80, 20, 0, 0x64, 0 },
+  { SPINBOX_CreateIndirect, "volume_spin", ID_SPINBOX_1, 90, 270, 80, 30, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "seekdown_btn", ID_BUTTON_0, 5, 230, 80, 30, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "seekup_btn", ID_BUTTON_1, 90, 230, 80, 30, 0, 0x0, 0 },
+  { CHECKBOX_CreateIndirect, "rds_box", ID_CHECKBOX_0, 175, 235, 80, 20, 0, 0x0, 0 },
+  { CHECKBOX_CreateIndirect, "bass_box", ID_CHECKBOX_1, 175, 265, 80, 20, 0, 0x0, 0 },
+  { CHECKBOX_CreateIndirect, "mute_box", ID_CHECKBOX_2, 175, 295, 80, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "pwr_btn", ID_BUTTON_2, 155, 5, 80, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "rst_btn", ID_BUTTON_3, 185, 30, 50, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "title", ID_TEXT_2, 5, 5, 120, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "frequency", ID_TEXT_3, 5, 30, 85, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "freq", ID_TEXT_4, 95, 30, 90, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "signal", ID_TEXT_5, 5, 55, 55, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text", ID_TEXT_6, 60, 55, 20, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "signal_strength", ID_TEXT_7, 65, 55, 20, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "stereo", ID_TEXT_8, 5, 75, 60, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "stereo_status", ID_TEXT_9, 70, 75, 30, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "rds", ID_TEXT_10, 5, 95, 45, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "rds_status", ID_TEXT_11, 55, 95, 180, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "rdsdata", ID_TEXT_12, 5, 115, 150, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "dumpreaddata", ID_TEXT_13, 0, 155, 240, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "dumpwritedata", ID_TEXT_14, 0, 175, 240, 20, 0, 0x64, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -98,9 +120,9 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
   WM_HWIN hItem;
   int     NCode;
   int     Id;
-  float   frq;
-  char bufem[30];
   // USER START (Optionally insert additional variables)
+  float   frq;
+  char bufem[10];
   // USER END
 
   switch (pMsg->MsgId) {
@@ -111,83 +133,169 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hItem = pMsg->hWin;
     WINDOW_SetBkColor(hItem, 0x00000000);
 	//
-	// Initialization of channel spinbox
+	// Initialization of channel frequency spinbox
 	//
 	hItem = WM_GetDialogItem(pMsg->hWin,  ID_SPINBOX_0);
 	SPINBOX_SetRange(hItem, 875, 1080);
 	SPINBOX_SetFont(hItem, GUI_FONT_COMIC18B_1);
 	//
-	// Initialization of volume spinbox
+	// Initialization of volume volume spinbox
 	//
 	hItem = WM_GetDialogItem(pMsg->hWin,  ID_SPINBOX_1);
 	SPINBOX_SetRange(hItem, 0, 15);
 	SPINBOX_SetFont(hItem, GUI_FONT_COMIC18B_1);
     //
-    // Initialization of 'power'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0);
-    BUTTON_SetText(hItem, "Power On");
-    BUTTON_SetFont(hItem, GUI_FONT_8X16);
-    //
-    // Initialization of 'reset'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_1);
-    BUTTON_SetText(hItem, "Reset");
-    BUTTON_SetFont(hItem, GUI_FONT_8X16);
-    //
-    // Initialization of 'seekdown'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_2);
-    BUTTON_SetText(hItem, "Seek Down");
-    BUTTON_SetFont(hItem, GUI_FONT_8X16);
-    //
-    // Initialization of 'seekup'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_3);
-    BUTTON_SetText(hItem, "Seek Up");
-    BUTTON_SetFont(hItem, GUI_FONT_8X16);
-    //
-    // Initialization of 'mute'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_0);
-    CHECKBOX_SetText(hItem, "Mute");
-    CHECKBOX_SetTextColor(hItem, 0x00FFFFFF);
-    CHECKBOX_SetFont(hItem, GUI_FONT_8X16);
-    //
-    // Initialization of 'tittle'
+    // Initialization of 'frequency1'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
+    TEXT_SetText(hItem, "Frequency");
     TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     TEXT_SetTextColor(hItem, 0x00FFFFFF);
-    TEXT_SetText(hItem, "RDA5807M FM");
     //
-    // Initialization of 'text1'
+    // Initialization of 'volume'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
-    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
     TEXT_SetTextColor(hItem, 0x00FFFFFF);
-    TEXT_SetText(hItem, "Frequency:");
+    TEXT_SetText(hItem, "Volume");
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     //
-    // Initialization of 'text2'
+    // Initialization of 'seekdown_btn'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0);
+    BUTTON_SetFont(hItem, GUI_FONT_8X17);
+    BUTTON_SetText(hItem, "Seek Down");
+    //
+    // Initialization of 'seekup_btn'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_1);
+    BUTTON_SetFont(hItem, GUI_FONT_8X17);
+    BUTTON_SetText(hItem, "Seek Up");
+    //
+    // Initialization of 'rds_box'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_0);
+    CHECKBOX_SetText(hItem, "RDS");
+    CHECKBOX_SetTextColor(hItem, 0x00FFFFFF);
+    CHECKBOX_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    //
+    // Initialization of 'bass_box'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_1);
+    CHECKBOX_SetText(hItem, "Bass");
+    CHECKBOX_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    CHECKBOX_SetTextColor(hItem, 0x00FFFFFF);
+    //
+    // Initialization of 'mute_box'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_2);
+    CHECKBOX_SetText(hItem, "Mute");
+    CHECKBOX_SetTextColor(hItem, 0x00FFFFFF);
+    CHECKBOX_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    //
+    // Initialization of 'pwr_btn'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_2);
+    BUTTON_SetFont(hItem, GUI_FONT_8X17);
+    BUTTON_SetText(hItem, "Power On");
+    //
+    // Initialization of 'rst_btn'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_3);
+    BUTTON_SetText(hItem, "Reset");
+    BUTTON_SetFont(hItem, GUI_FONT_8X17);
+    //
+    // Initialization of 'title'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
+    TEXT_SetText(hItem, "RDA7805M FM");
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    //
+    // Initialization of 'frequency'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_3);
+    TEXT_SetText(hItem, "Frequency : ");
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    //
+    // Initialization of 'freq'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetText(hItem, "");
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    //
+    // Initialization of 'signal'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_5);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetText(hItem, "RSSI : ");
+    //
+    // Initialization of 'Text'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_6);
+    TEXT_SetText(hItem, "");
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    //
+    // Initialization of 'signal_strength'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_7);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetText(hItem, "");
+    //
+    // Initialization of 'stereo'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_8);
+    TEXT_SetText(hItem, "Stereo : ");
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    //
+    // Initialization of 'stereo_status'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_9);
+    TEXT_SetText(hItem, "");
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    //
+    // Initialization of 'rds'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_10);
+    TEXT_SetText(hItem, "RDS :");
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    //
+    // Initialization of 'rds_status'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_11);
+    TEXT_SetText(hItem, "");
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    //
+    // Initialization of 'rdsdata'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_12);
     TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
     TEXT_SetTextColor(hItem, 0x00FFFFFF);
     TEXT_SetText(hItem, "");
     //
-    // Initialization of 'bass'
+    // Initialization of 'read dump'
     //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_1);
-    CHECKBOX_SetText(hItem, "Bass");
-    CHECKBOX_SetTextColor(hItem, 0x00FFFFFF);
-    CHECKBOX_SetFont(hItem, GUI_FONT_8X16);
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_13);
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetText(hItem, "");
     //
-    // Initialization of 'rds'
+    // Initialization of 'wrirte dump'
     //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_2);
-    CHECKBOX_SetText(hItem, "RDS");
-    CHECKBOX_SetTextColor(hItem, 0x00FFFFFF);
-    CHECKBOX_SetFont(hItem, GUI_FONT_8X16);
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_14);
+    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetText(hItem, "");
     // USER START (Optionally insert additional code for further widget initialization)
     // USER END
     break;
@@ -195,7 +303,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     Id    = WM_GetId(pMsg->hWinSrc);
     NCode = pMsg->Data.v;
     switch(Id) {
-    case ID_BUTTON_0: // Notifications sent by 'power'
+    case ID_SPINBOX_0: // Notifications sent by 'frequency_spin'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -204,52 +312,68 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-      	if((RDA5807M_WriteReg[0] & 1) == 0){
-      		RDA5807_PowerOn();
-      		hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0);
-      		BUTTON_SetText(hItem, "Power Off");
-      	}
-      	else{
-  			RDA5807_PowerOff();
-      		hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0);
-      		BUTTON_SetText(hItem, "Power On");
-      	}
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_BUTTON_1: // Notifications sent by 'reset'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-    	RDA5807_Reset();
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_BUTTON_2: // Notifications sent by 'seekdown'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-    	RDA5807_SeekDown();
+    	frq = SPINBOX_GetValue(pMsg->hWinSrc);
+    	RDA5807_Frequency(((float)frq/(float)100));
     	GUI_Delay(200);
     	RDA5807_Read();
     	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
     	frq = (float)freq / 1000;
     	int d1 = frq;
-    	int d2= (frq - d1)*100;
+    	int d2= (frq - d1)*10.1;
+    	sprintf (bufem, "%d.%dMHz", d1, d2);
+    	TEXT_SetText(hItem,bufem);
+        break;
+      case WM_NOTIFICATION_MOVED_OUT:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_SPINBOX_1: // Notifications sent by 'volume_spin'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_MOVED_OUT:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+    	RDA5807_Volume(SPINBOX_GetValue(pMsg->hWinSrc));
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_0: // Notifications sent by 'seekdown_btn'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+		RDA5807_SeekDown();
+    	GUI_Delay(200);
+    	RDA5807_Read();
+    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
+    	frq = (float)freq / 1000;
+    	int d1 = frq;
+    	int d2= (frq - d1)*10.1;
     	sprintf (bufem, "%d.%dMHz", d1, d2);
     	TEXT_SetText(hItem,bufem);
         break;
@@ -257,7 +381,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       // USER END
       }
       break;
-    case ID_BUTTON_3: // Notifications sent by 'seekup'
+    case ID_BUTTON_1: // Notifications sent by 'seekup_btn'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -266,13 +390,13 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-    	RDA5807_SeekUp();
+		RDA5807_SeekUp();
 		GUI_Delay(200);
     	RDA5807_Read();
-    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
+    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
     	frq = (float)freq / 1000;
     	int d1 = frq;
-    	int d2= (frq - d1)*100;
+    	int d2= (frq - d1)*10.1;
     	sprintf (bufem, "%d.%dMHz", d1, d2);
         TEXT_SetText(hItem,bufem);
         break;
@@ -280,7 +404,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       // USER END
       }
       break;
-    case ID_CHECKBOX_0: // Notifications sent by 'mute'
+    case ID_CHECKBOX_0: // Notifications sent by 'rds_box'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -289,7 +413,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-    	RDA5807_Mute();
+    	RDA5807_RDS();
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -299,7 +423,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       // USER END
       }
       break;
-    case ID_SPINBOX_0: // Notifications sent by 'Spinbox' channel
+    case ID_CHECKBOX_1: // Notifications sent by 'bass_box'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -308,29 +432,17 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-        break;
-      case WM_NOTIFICATION_MOVED_OUT:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
+        RDA5807_BassBoost();
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-    	frq = SPINBOX_GetValue(pMsg->hWinSrc);
-    	RDA5807_Frequency(((float)frq/(float)100));
-    	RDA5807_Read();
-    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
-    	frq = (float)freq / 1000;
-    	int d1 = frq;
-    	int d2= (frq - d1)*100;
-    	sprintf (bufem, "%d.%dMHz", d1, d2);
-    	TEXT_SetText(hItem,bufem);
         break;
       // USER START (Optionally insert additional code for further notification handling)
       // USER END
       }
       break;
-    case ID_SPINBOX_1: // Notifications sent by 'Spinbox' volume
+    case ID_CHECKBOX_2: // Notifications sent by 'mute_box'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -339,21 +451,17 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-        break;
-      case WM_NOTIFICATION_MOVED_OUT:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
+		RDA5807_Mute();
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-        RDA5807_Volume(SPINBOX_GetValue(pMsg->hWinSrc));
         break;
       // USER START (Optionally insert additional code for further notification handling)
       // USER END
       }
       break;
-    case ID_CHECKBOX_1: // Notifications sent by 'bass'
+    case ID_BUTTON_2: // Notifications sent by 'pwr_btn'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -362,17 +470,22 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-    	RDA5807_BassBoost();
+		if((RDA5807M_WriteReg[0] & 1) == 0){
+      		RDA5807_PowerOn();
+      		hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_2);
+      		BUTTON_SetText(hItem, "Power Off");
+      	}
+      	else{
+  			RDA5807_PowerOff();
+      		hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_2);
+      		BUTTON_SetText(hItem, "Power On");
+      	}
         break;
       // USER START (Optionally insert additional code for further notification handling)
       // USER END
       }
       break;
-    case ID_CHECKBOX_2: // Notifications sent by 'rds'
+    case ID_BUTTON_3: // Notifications sent by 'rst_btn'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -381,10 +494,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
+		RDA5807_Reset();
         break;
       // USER START (Optionally insert additional code for further notification handling)
       // USER END
@@ -412,17 +522,19 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 *
 *       CreateWindow
 */
-WM_HWIN CreateWindow(void){
+WM_HWIN CreateWindow(void);
+WM_HWIN CreateWindow(void) {
   WM_HWIN hWin;
 
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
   return hWin;
 }
-
+// ####################### float f_fmhz=f_fbeg+i_ch*0.10;
 // USER START (Optionally insert additional public code)
-
+void MainTask(void);
 void MainTask(void){
-	WM_HWIN hDlg;
+	char refresh[30];
+	WM_HWIN hDlg,hText;
 	BUTTON_SetDefaultSkin   (BUTTON_SKIN_FLEX);
 	CHECKBOX_SetDefaultSkin (CHECKBOX_SKIN_FLEX);
 	SPINBOX_SetDefaultSkin   (SPINBOX_SKIN_FLEX);
@@ -432,11 +544,57 @@ void MainTask(void){
 	// Call creation function for the dialog
 	hDlg = CreateWindow();
 	// Keep program alive
-	while (1) {
-		GUI_Delay(10);
+	while (1){
+		int rds = 0;
+		GUI_Delay(200);
+		RDA5807_Read();
+	    hText = WM_GetDialogItem(hDlg, ID_TEXT_7);
+	    sprintf (refresh, "%d", signal);
+	    TEXT_SetText(hText, refresh);
+	    if(stereo == 0x400){
+	    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_9), "Yes");
+	    }
+	    else{
+	    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_9), "No");
+	    }
+
+	    if((RDA5807M_WriteReg[0] & 0x8) == 0x8){
+	    	if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x8000){
+	    		TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Ready.");
+	    	}
+		    else if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x0000){
+		    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Waiting.");
+		    }
+		    else
+		    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Not Available.");
+	    }
+	    else{
+	    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Off!");
+		}
+
+	    /* Dump R/W Registers # To Do implement debug touch button #*/
+	    sprintf(refresh, "%04x,%04x,%04x,%04x,%04x,%04x",RDA5807M_ReadReg[0],RDA5807M_ReadReg[1],RDA5807M_ReadReg[2],RDA5807M_ReadReg[3],RDA5807M_ReadReg[4],RDA5807M_ReadReg[5]);
+	    TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);
+	    sprintf(refresh, "%04x,%04x,%04x,%04x,%04x,%04x",RDA5807M_WriteReg[0],RDA5807M_WriteReg[1],RDA5807M_WriteReg[2],RDA5807M_WriteReg[3],RDA5807M_WriteReg[4],RDA5807M_WriteReg[5]);
+	    TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_14), refresh);
+
+	    /* Loop until 4 characters received */
+	    /*
+	    while(rds < 4){
+	    	RDA5807_Read();
+	    	if((RDA5807M_ReadReg[3] & 0xF000) == 0x2000){
+				int i;
+				for (i=4;i<6;i++){
+					int high = RDA5807M_ReadReg[i] >> 8;
+					int low = RDA5807M_ReadReg[i] & 0xFF;
+					sprintf (refresh, "%c", s);
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), refresh);
+				}
+				rds++;
+			}
+	    }*/
 	}
 }
-
 // USER END
 
 /*************************** End of file ****************************/
