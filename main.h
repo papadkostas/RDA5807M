@@ -9,9 +9,7 @@
 // Includes
 //--------------------------------------------------------------
 #include "stm32f4xx.h"
-#include "RDA5807M.h"
 #include "stm32_ub_stemwin.h"
-#include "RDA5807MemWin.h"
 
 //--------------------------------------------------------------
 // Global Functions

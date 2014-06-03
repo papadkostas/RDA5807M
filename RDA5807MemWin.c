@@ -19,6 +19,8 @@
 */
 
 // USER START (Optionally insert additional includes)
+#include "Converter.h"
+#include "stm32_ub_i2c3.h"
 #include "RDA5807MemWin.h"
 // USER END
 
@@ -136,13 +138,14 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 	// Initialization of channel frequency spinbox
 	//
 	hItem = WM_GetDialogItem(pMsg->hWin,  ID_SPINBOX_0);
-	SPINBOX_SetRange(hItem, 875, 1080);
+	SPINBOX_SetRange(hItem, 870, 1080);
 	SPINBOX_SetFont(hItem, GUI_FONT_COMIC18B_1);
 	//
 	// Initialization of volume volume spinbox
 	//
 	hItem = WM_GetDialogItem(pMsg->hWin,  ID_SPINBOX_1);
 	SPINBOX_SetRange(hItem, 0, 15);
+	SPINBOX_SetValue(hItem, StartingVolume);
 	SPINBOX_SetFont(hItem, GUI_FONT_COMIC18B_1);
     //
     // Initialization of 'frequency1'
@@ -313,14 +316,14 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
     	frq = SPINBOX_GetValue(pMsg->hWinSrc);
-    	RDA5807_Frequency(((float)frq/(float)100));
+    	RDA5807_Frequency(((float)frq/(float)10));
     	GUI_Delay(200);
     	RDA5807_Read();
-    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
-    	frq = (float)freq / 1000;
+    	frq = (float)freq / 1001;
     	int d1 = frq;
-    	int d2= (frq - d1)*10.1;
+    	int d2= (frq - d1)*10;
     	sprintf (bufem, "%d.%dMHz", d1, d2);
+    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
     	TEXT_SetText(hItem,bufem);
         break;
       case WM_NOTIFICATION_MOVED_OUT:
@@ -370,12 +373,15 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		RDA5807_SeekDown();
     	GUI_Delay(200);
     	RDA5807_Read();
-    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
     	frq = (float)freq / 1000;
     	int d1 = frq;
     	int d2= (frq - d1)*10.1;
     	sprintf (bufem, "%d.%dMHz", d1, d2);
+    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
     	TEXT_SetText(hItem,bufem);
+    	frq = (float)freq / 100;
+    	hItem = WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0);
+    	SPINBOX_SetValue(hItem, frq);
         break;
       // USER START (Optionally insert additional code for further notification handling)
       // USER END
@@ -393,12 +399,15 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		RDA5807_SeekUp();
 		GUI_Delay(200);
     	RDA5807_Read();
-    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
     	frq = (float)freq / 1000;
     	int d1 = frq;
     	int d2= (frq - d1)*10.1;
     	sprintf (bufem, "%d.%dMHz", d1, d2);
-        TEXT_SetText(hItem,bufem);
+    	hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
+    	TEXT_SetText(hItem,bufem);
+    	frq = (float)freq / 100;
+    	hItem = WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0);
+    	SPINBOX_SetValue(hItem, frq);
         break;
       // USER START (Optionally insert additional code for further notification handling)
       // USER END
@@ -474,11 +483,27 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       		RDA5807_PowerOn();
       		hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_2);
       		BUTTON_SetText(hItem, "Power Off");
+      		GUI_Delay(200);
+      		RDA5807_Read();
+      		frq = (float)freq / 1000;
+      		int d1 = frq;
+      		int d2= (frq - d1)*10.1;
+      		sprintf (bufem, "%d.%dMHz", d1, d2);
+      		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
+      		TEXT_SetText(hItem,bufem);
+      		frq = (float)freq / 100;
+      		hItem = WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0);
+      		SPINBOX_SetValue(hItem, frq);
       	}
       	else{
   			RDA5807_PowerOff();
       		hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_2);
       		BUTTON_SetText(hItem, "Power On");
+      		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
+      		TEXT_SetText(hItem,"");
+      		frq = (float)freq / 100;
+      		hItem = WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0);
+      		SPINBOX_SetValue(hItem, frq);
       	}
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -533,6 +558,9 @@ WM_HWIN CreateWindow(void) {
 // USER START (Optionally insert additional public code)
 void MainTask(void);
 void MainTask(void){
+	UB_Led_Init();
+  	UB_I2C3_Init();
+  	RDA5807_Init();
 	char refresh[30];
 	WM_HWIN hDlg,hText;
 	BUTTON_SetDefaultSkin   (BUTTON_SKIN_FLEX);
@@ -544,55 +572,59 @@ void MainTask(void){
 	// Call creation function for the dialog
 	hDlg = CreateWindow();
 	// Keep program alive
-	while (1){
-		int rds = 0;
+	while(1){
 		GUI_Delay(200);
-		RDA5807_Read();
-	    hText = WM_GetDialogItem(hDlg, ID_TEXT_7);
-	    sprintf (refresh, "%d", signal);
-	    TEXT_SetText(hText, refresh);
-	    if(stereo == 0x400){
-	    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_9), "Yes");
-	    }
-	    else{
-	    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_9), "No");
-	    }
-
-	    if((RDA5807M_WriteReg[0] & 0x8) == 0x8){
-	    	if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x8000){
-	    		TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Ready.");
-	    	}
-		    else if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x0000){
-		    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Waiting.");
-		    }
-		    else
-		    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Not Available.");
-	    }
-	    else{
-	    	TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Off!");
-		}
-
-	    /* Dump R/W Registers # To Do implement debug touch button #*/
-	    sprintf(refresh, "%04x,%04x,%04x,%04x,%04x,%04x",RDA5807M_ReadReg[0],RDA5807M_ReadReg[1],RDA5807M_ReadReg[2],RDA5807M_ReadReg[3],RDA5807M_ReadReg[4],RDA5807M_ReadReg[5]);
-	    TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);
-	    sprintf(refresh, "%04x,%04x,%04x,%04x,%04x,%04x",RDA5807M_WriteReg[0],RDA5807M_WriteReg[1],RDA5807M_WriteReg[2],RDA5807M_WriteReg[3],RDA5807M_WriteReg[4],RDA5807M_WriteReg[5]);
-	    TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_14), refresh);
-
-	    /* Loop until 4 characters received */
-	    /*
-	    while(rds < 4){
-	    	RDA5807_Read();
-	    	if((RDA5807M_ReadReg[3] & 0xF000) == 0x2000){
-				int i;
-				for (i=4;i<6;i++){
-					int high = RDA5807M_ReadReg[i] >> 8;
-					int low = RDA5807M_ReadReg[i] & 0xFF;
-					sprintf (refresh, "%c", s);
-					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), refresh);
-				}
-				rds++;
+		while ((RDA5807M_WriteReg[0] & 0x1) == 0x1){
+			//int rds = 0;
+			GUI_Delay(200);
+			RDA5807_Read();
+			hText = WM_GetDialogItem(hDlg, ID_TEXT_7);
+			sprintf (refresh, "%d", signal);
+			TEXT_SetText(hText, refresh);
+			if(stereo == 0x400){
+				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_9), "Yes");
 			}
-	    }*/
+			else{
+				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_9), "No");
+			}
+
+			if((RDA5807M_WriteReg[0] & 0x8) == 0x8){
+				if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x8000){
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Ready.");
+				}
+				else if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x0000){
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Waiting.");
+					if((RDA5807M_ReadReg[3] & 0xF000) == 0x2000){
+						char test = (char)RDA5807M_ReadReg[4];
+						//sprintf(refresh, "%04x,%04x",RDA5807M_ReadReg[4],RDA5807M_ReadReg[5]);
+						sprintf(refresh, "%c",test);
+						TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);
+				        /*const char* st = (const char*)RDA5807M_ReadReg[4];
+				        int length = strlen(st);
+				        int i;
+				        char buf = 0;
+				        for(i = 0; i < length; i++){
+				        	if(i % 2 != 0){
+				        		//printf("%c", hex_to_ascii(buf, st[i]));
+				        		sprintf(refresh, "%c", hex_to_ascii(buf, st[i]));
+				        		TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);
+				        	}
+				        	else{
+				                buf = st[i];
+				        	}
+				        }*/
+					}
+				}
+				else{
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Not Available.");
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), "");
+				}
+			}
+			else{
+				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Off!");
+				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), "");
+			}
+		}
 	}
 }
 // USER END

@@ -9,6 +9,7 @@
 // Includes
 //--------------------------------------------------------------
 #include <stdio.h>
+#include "stm32_ub_led.h"
 #include "stm32_ub_i2c3.h"
 
 //--------------------------------------------------------------
@@ -40,7 +41,7 @@ int RDA5807_Channel(void);
 
 #define StartingFreq 	87.000
 #define EndingFreq 		108.00
-#define DefaultFreq		102.60
+#define DefaultFreq		87.000
 #define StartingVolume 	0x4
 
 /* Register 0x00H (16Bits) */

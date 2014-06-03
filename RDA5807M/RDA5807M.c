@@ -154,6 +154,7 @@ int8_t RDA5807_RDS(){
 }
 
 int8_t RDA5807_Read(){
+	UB_Led_On(LED_GREEN);
 	int8_t i,x=0;
 	RDAstatus = UB_I2C3_ReadMultiByte(RDASequential<<1,0x00,14,0);
 	for(i=0; i<13; i=i+2){
@@ -179,5 +180,6 @@ int8_t RDA5807_Read(){
 																//00= 0 errors,01= 1~2 errors requiring correction
 																//10= 3~5 errors requiring correction
 																//11= 6+ errors or error in checkword, correction not possible.
+	UB_Led_Off(LED_GREEN);
 	return RDAstatus;
 }
