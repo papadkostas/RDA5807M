@@ -575,8 +575,7 @@ void MainTask(void){
 	while(1){
 		GUI_Delay(200);
 		while ((RDA5807M_WriteReg[0] & 0x1) == 0x1){
-			//int rds = 0;
-			GUI_Delay(200);
+			GUI_Delay(150);
 			RDA5807_Read();
 			hText = WM_GetDialogItem(hDlg, ID_TEXT_7);
 			sprintf (refresh, "%d", signal);
@@ -587,32 +586,19 @@ void MainTask(void){
 			else{
 				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_9), "No");
 			}
-
 			if((RDA5807M_WriteReg[0] & 0x8) == 0x8){
 				if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x8000){
 					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Ready.");
+					if((RDA5807M_ReadReg[3] & 0xF000) == 0x2000){
+						sprintf(refresh, "%c%c%c%c",RDA5807M_ReadReg[4]>>8,RDA5807M_ReadReg[4]&0xFF,RDA5807M_ReadReg[5]>>8,RDA5807M_ReadReg[5]&0xFF);
+						TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);
+					}
 				}
 				else if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x0000){
 					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Waiting.");
 					if((RDA5807M_ReadReg[3] & 0xF000) == 0x2000){
-						char test = (char)RDA5807M_ReadReg[4];
-						//sprintf(refresh, "%04x,%04x",RDA5807M_ReadReg[4],RDA5807M_ReadReg[5]);
-						sprintf(refresh, "%c",test);
+						sprintf(refresh, "%c%c%c%c",RDA5807M_ReadReg[4]>>8,RDA5807M_ReadReg[4]&0xFF,RDA5807M_ReadReg[5]>>8,RDA5807M_ReadReg[5]&0xFF);
 						TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);
-				        /*const char* st = (const char*)RDA5807M_ReadReg[4];
-				        int length = strlen(st);
-				        int i;
-				        char buf = 0;
-				        for(i = 0; i < length; i++){
-				        	if(i % 2 != 0){
-				        		//printf("%c", hex_to_ascii(buf, st[i]));
-				        		sprintf(refresh, "%c", hex_to_ascii(buf, st[i]));
-				        		TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);
-				        	}
-				        	else{
-				                buf = st[i];
-				        	}
-				        }*/
 					}
 				}
 				else{
