@@ -19,7 +19,6 @@
 */
 
 // USER START (Optionally insert additional includes)
-#include "Converter.h"
 #include "stm32_ub_i2c3.h"
 #include "RDA5807MemWin.h"
 // USER END
@@ -282,7 +281,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'rdsdata'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_12);
-    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetFont(hItem, GUI_FONT_COMIC24B_1);
     TEXT_SetTextColor(hItem, 0x00FFFFFF);
     TEXT_SetText(hItem, "");
     //
@@ -293,7 +292,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     TEXT_SetTextColor(hItem, 0x00FFFFFF);
     TEXT_SetText(hItem, "");
     //
-    // Initialization of 'wrirte dump'
+    // Initialization of 'write dump'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_14);
     TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
@@ -550,7 +549,6 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 WM_HWIN CreateWindow(void);
 WM_HWIN CreateWindow(void) {
   WM_HWIN hWin;
-
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
   return hWin;
 }
@@ -591,19 +589,19 @@ void MainTask(void){
 					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Ready.");
 					if((RDA5807M_ReadReg[3] & 0xF000) == 0x2000){
 						sprintf(refresh, "%c%c%c%c",RDA5807M_ReadReg[4]>>8,RDA5807M_ReadReg[4]&0xFF,RDA5807M_ReadReg[5]>>8,RDA5807M_ReadReg[5]&0xFF);
-						TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);
+						TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), refresh);
 					}
 				}
 				else if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x0000){
 					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Waiting.");
 					if((RDA5807M_ReadReg[3] & 0xF000) == 0x2000){
 						sprintf(refresh, "%c%c%c%c",RDA5807M_ReadReg[4]>>8,RDA5807M_ReadReg[4]&0xFF,RDA5807M_ReadReg[5]>>8,RDA5807M_ReadReg[5]&0xFF);
-						TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);
+						TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), refresh);
 					}
 				}
 				else{
 					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Not Available.");
-					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), "");
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), "");
 				}
 			}
 			else{

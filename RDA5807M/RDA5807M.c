@@ -2,11 +2,29 @@
 //--------------------------------------------------------------
 // Local Variables
 //--------------------------------------------------------------
-int rssi,volume;
+int volume;
+int RDAstatus = 0;
 unsigned int RDA5807M_WriteRegDef[6] ={0xC004,0x0000,0x0100,0x84D4,0x4000,0x0000};
 int8_t RDA5807_WriteReg(uint8_t address,uint16_t data);
-int RDAstatus = 0;
 
+void RDA5807_ErrorHandler(){
+	switch(RDAstatus){
+	case -1:
+		//I2C start flag failed
+		break;
+	case -2:
+		//I2C slave address does not match
+		break;
+	case -3:
+		//I2C data register is not empty
+		break;
+	case -4:
+		//I2C end transmission flag, nothing transmitted
+		break;
+	case -5:
+		break;
+	}
+}
 int8_t RDA5807_WriteAll(){
 	int i,x = 0;
 	for(i=0; i<12; i=i+2){
@@ -37,15 +55,15 @@ int8_t RDA5807_Init(){
 }
 
 int8_t RDA5807_PowerOn(){
-	RDA5807M_WriteReg[1] = RDA5807M_WriteReg[1] | 0x10;
-	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | 0x01;
+	RDA5807M_WriteReg[1] = RDA5807M_WriteReg[1] | 0x0010;
+	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | RDA_POWER;
 	RDAstatus = RDA5807_WriteAll();
 	RDA5807M_WriteReg[1] = RDA5807M_WriteReg[1] & 0xFFEF;	//Disable tune after PowerOn operation
 	return RDAstatus;
 }
 
 int8_t RDA5807_PowerOff(){
-	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] ^ 0x01;
+	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] ^ RDA_POWER;
 	return RDAstatus = RDA5807_WriteAll();
 }
 
@@ -70,24 +88,23 @@ int8_t RDA5807_Volume(uint8_t vol){
 
 int8_t RDA5807_BassBoost(){
     if ((RDA5807M_WriteReg[0] & 0x1000)==0){
-    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | 0x1000;
+    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | RDA_BASS_ON;
     }
     else{
-    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & 0xCFFF;
+    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & RDA_BASS_OFF;
     }
     return RDAstatus = RDA5807_WriteAll();
 }
 
 int8_t RDA5807_Mono(){
     if ((RDA5807M_WriteReg[0] & 0x2000)==0){
-    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | 0x2000;
+    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | RDA_MONO_ON;
     }
     else{
-    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & 0xDFFF;
+    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & RDA_MONO_OFF;
     }
     return RDAstatus = RDA5807_WriteAll();
 }
-
 
 int8_t RDA5807_Mute(){
     if ((RDA5807M_WriteReg[0] & 0x8000)==0){
@@ -120,16 +137,16 @@ int8_t RDA5807_SoftBlend(){
 }
 
 int8_t RDA5807_SeekUp(){
-	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | 0x0300;   // Set Seek Up
+	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | RDA_SEEK_UP;   // Set Seek Up
 	RDAstatus = RDA5807_WriteAll();
-	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & 0xFCFF;   // Disable Seek
+	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & RDA_SEEK_STOP;   // Disable Seek
 	return RDAstatus;
 }
 
 int8_t RDA5807_SeekDown(){
-	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | 0x0100;   // Set Seek Down
+	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | RDA_SEEK_DOWN;   // Set Seek Down
 	RDAstatus = RDA5807_WriteAll();
-	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & 0xFCFF;   // Disable Seek
+	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & RDA_SEEK_STOP;   // Disable Seek
 	return RDAstatus;
 }
 
@@ -139,16 +156,16 @@ int8_t RDA5807_Frequency(float Freq){
 	Channel = Channel & 0x03FF;
 	RDA5807M_WriteReg[1] = Channel*64 +0x10;  // Channel + TUNE-Bit + Band=00(87-108) + Space=00(100kHz)
 	RDAstatus = RDA5807_WriteAll();
-	RDA5807M_WriteReg[1] = RDA5807M_WriteReg[1] & 0xFFEF;
+	RDA5807M_WriteReg[1] = RDA5807M_WriteReg[1] & RDA_TUNE_OFF;
 	return RDAstatus;
 }
 
 int8_t RDA5807_RDS(){
-    if ((RDA5807M_WriteReg[0] & 0x0008)==0){
-    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | 0x0008;
+    if ((RDA5807M_WriteReg[0] & RDA_RDS_ON)==0){
+    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] | RDA_RDS_ON;
     }
     else{
-    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & 0xFFF7;
+    	RDA5807M_WriteReg[0] = RDA5807M_WriteReg[0] & RDA_RDS_OFF;
     }
     return RDAstatus = RDA5807_WriteAll();
 }
