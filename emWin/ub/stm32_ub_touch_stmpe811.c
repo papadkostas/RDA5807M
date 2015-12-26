@@ -112,6 +112,10 @@ ErrorStatus UB_Touch_Read(void)
   UB_I2C3_WriteByte(STMPE811_I2C_ADDR, IOE_REG_FIFO_STA, 0x01);
   UB_I2C3_WriteByte(STMPE811_I2C_ADDR, IOE_REG_FIFO_STA, 0x00);
 
+//********************************************************************************************
+  RDA5807_Read();  // function call to read RDS data faster, 10mS required for best results.
+//********************************************************************************************
+
   return(SUCCESS);
 }
 
