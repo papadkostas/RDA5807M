@@ -22,7 +22,7 @@
 #include "stm32_ub_i2c3.h"
 #include "RDA5807MemWin.h"
 // USER END
-
+#include <string.h>
 #include "DIALOG.h"
 
 /*********************************************************************
@@ -96,9 +96,9 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { TEXT_CreateIndirect, "stereo_status", ID_TEXT_9, 70, 75, 30, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "rds", ID_TEXT_10, 5, 95, 45, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "rds_status", ID_TEXT_11, 55, 95, 180, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "rdsdata", ID_TEXT_12, 5, 115, 150, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "dumpreaddata", ID_TEXT_13, 0, 155, 240, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "dumpwritedata", ID_TEXT_14, 0, 175, 240, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "STATIONname", ID_TEXT_12, 5, 115, 235, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "RDStext", ID_TEXT_13, 10, 145, 220, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "CTtime", ID_TEXT_14, 5, 175, 235, 20, 0, 0x64, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -211,8 +211,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'title'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
-    TEXT_SetText(hItem, "RDA7805M FM");
-    TEXT_SetTextColor(hItem, 0x00FFFFFF);
+    TEXT_SetText(hItem, "RDA5807M FM");
+    TEXT_SetTextColor(hItem, 0x00000FFF);
     TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
     //
     // Initialization of 'frequency'
@@ -278,24 +278,24 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
     TEXT_SetTextColor(hItem, 0x00FFFFFF);
     //
-    // Initialization of 'rdsdata'
+    // Initialization of 'STATIONname'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_12);
     TEXT_SetFont(hItem, GUI_FONT_COMIC24B_1);
     TEXT_SetTextColor(hItem, 0x00FFFFFF);
     TEXT_SetText(hItem, "");
     //
-    // Initialization of 'read dump'
+    // Initialization of 'RDStext'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_13);
     TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
     TEXT_SetTextColor(hItem, 0x00FFFFFF);
     TEXT_SetText(hItem, "");
     //
-    // Initialization of 'write dump'
+    // Initialization of 'CTtime'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_14);
-    TEXT_SetFont(hItem, GUI_FONT_COMIC18B_1);
+    TEXT_SetFont(hItem, GUI_FONT_COMIC24B_1);
     TEXT_SetTextColor(hItem, 0x00FFFFFF);
     TEXT_SetText(hItem, "");
     // USER START (Optionally insert additional code for further widget initialization)
@@ -556,10 +556,10 @@ WM_HWIN CreateWindow(void) {
 // USER START (Optionally insert additional public code)
 void MainTask(void);
 void MainTask(void){
+	int8_t t;
 	UB_Led_Init();
   	UB_I2C3_Init();
   	RDA5807_Init();
-	char refresh[30];
 	WM_HWIN hDlg,hText;
 	BUTTON_SetDefaultSkin   (BUTTON_SKIN_FLEX);
 	CHECKBOX_SetDefaultSkin (CHECKBOX_SKIN_FLEX);
@@ -572,9 +572,11 @@ void MainTask(void){
 	// Keep program alive
 	while(1){
 		GUI_Delay(200);
+
+		// ********** RDA5807_read() call moved to stm32_ub_touch_stmpe811.c file for faster RDS updates **********
+
 		while ((RDA5807M_WriteReg[0] & 0x1) == 0x1){
-			GUI_Delay(150);
-			RDA5807_Read();
+			GUI_Delay(200);
 			hText = WM_GetDialogItem(hDlg, ID_TEXT_7);
 			sprintf (refresh, "%d", signal);
 			TEXT_SetText(hText, refresh);
@@ -584,29 +586,32 @@ void MainTask(void){
 			else{
 				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_9), "No");
 			}
-			if((RDA5807M_WriteReg[0] & 0x8) == 0x8){
-				if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x8000){
-					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Ready.");
-					if((RDA5807M_ReadReg[3] & 0xF000) == 0x2000){
-						sprintf(refresh, "%c%c%c%c",RDA5807M_ReadReg[4]>>8,RDA5807M_ReadReg[4]&0xFF,RDA5807M_ReadReg[5]>>8,RDA5807M_ReadReg[5]&0xFF);
-						TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), refresh);
+
+			if(rdssynchro == 0x1000){
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Sync'd.");
+
+					sprintf(refresh, "Station: %s",StationName);
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), refresh);  // Display RDS station name
+
+					if(strlen(RDStext)>26){
+						int8_t textlen=strlen(RDStext);
+						strcpy (RDSscrolltext, RDStext + t);
+						t++;
+						if(t>textlen){t=0;}
+						sprintf(refresh, "%s",RDSscrolltext); //Scroll RDS text if more than 26 text characters
 					}
-				}
-				else if((RDA5807M_ReadReg[0] & 0x1000) == 0x1000 && (RDA5807M_ReadReg[0] & 0x8000) == 0x0000){
-					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "On, Synced and Waiting.");
-					if((RDA5807M_ReadReg[3] & 0xF000) == 0x2000){
-						sprintf(refresh, "%c%c%c%c",RDA5807M_ReadReg[4]>>8,RDA5807M_ReadReg[4]&0xFF,RDA5807M_ReadReg[5]>>8,RDA5807M_ReadReg[5]&0xFF);
-						TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), refresh);
+					else {
+						sprintf(refresh, "%s",RDStext);  // Display RDS text static on one line if less than 27 characters
 					}
-				}
-				else{
-					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Not Available.");
-					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), "");
-				}
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), refresh);  // display RDS text message
+
+					TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_14), CTtime);  // Display CT time, updates on the minute
 			}
 			else{
-				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Off!");
+				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_11), "Off!"); // Clear RDS info if no rdssynchro
+				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_12), "");
 				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_13), "");
+				TEXT_SetText(WM_GetDialogItem(hDlg, ID_TEXT_14), "");
 			}
 		}
 	}
