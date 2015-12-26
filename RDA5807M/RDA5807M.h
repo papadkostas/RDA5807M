@@ -17,6 +17,7 @@
 //--------------------------------------------------------------
 void RDA5807_Dump(void);
 int8_t RDA5807_Init(void);
+int8_t RDA5807_RDSinit(void);
 int8_t RDA5807_Read(void);
 int8_t RDA5807_Reset(void);
 int8_t RDA5807_PowerOn(void);
@@ -42,9 +43,9 @@ int RDA5807_Channel(void);
 #define TEA5767Mode		  0x60  //Not implemented
 
 /* Initialization Options */
-#define StartingFreq 	  87.000
-#define EndingFreq 		  108.00
-#define DefaultFreq		  87.000
+#define StartingFreq 	 87.00
+#define EndingFreq 		108.00
+#define DefaultFreq		 87.00
 #define StartingVolume 	0x4
 
 /* RDA5807M Function Code  */
@@ -82,9 +83,30 @@ int RDA5807_Channel(void);
 //--------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------
-//
+
 int rdsready,tuneok,nochannel,rdssynchro,stereo,freq,signal,fmready,fmstation,rdsblockerror;
 unsigned int RDA5807M_WriteReg[8],RDA5807M_ReadReg[7],RDA5807M_RDS[32];
+
+char 	refresh[70];
+
+// ----- RDS Variables
+char  StationName[10];    // Station Name. 8 characters
+char  RDStextbuffer[66];  // RDS text buffer 64 characters
+char  RDStext[66];        // RDS text message 64 characters
+char 	RDSscrolltext[66];	// RDS scroll text buffer
+char  CTtime[12];         // CT time string formatted as 'CT hh:mm'
+char	c1, c2;				      // RDS text characters
+char 	PSName[10];    		  // including trailing '\00' character.
+char 	PSName1[10];		    // Station Name buffers
+char 	PSName2[10];
+
+int 	rdsblockerror,rdssynchro,rdsready,rds,block1,block2,block3,block4;
+int 	mins;          		// RDS CT time in minutes transmitted on the minute
+int 	textAB, lasttextAB, lastTextIDX;
+int 	rdsGroupType, rdsTP, rdsPTY;
+int 	idx;              // index of rdsText
+int 	offset;           // RDS time offset and sign
+
 
 //--------------------------------------------------------------
 #endif // __RDA5807M_H
