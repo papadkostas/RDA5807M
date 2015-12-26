@@ -270,10 +270,8 @@ int8_t RDA5807_Read(){  // Read all RDA5807 registers
 	    if (textAB != lasttextAB) {
 	      // when this bit is toggled text data has changed, the whole buffer should be cleared.
 	      lasttextAB = textAB;
-	      if(signal>35){  // clear buffer if higher signal level to prevent spurious text blanking with error characters.
-	    	  memset(RDStextbuffer, 0, sizeof(RDStextbuffer));
-	      	  memset(RDStext, '\0', sizeof(RDStext));
-	      }
+	      memset(RDStextbuffer, 0, sizeof(RDStextbuffer));
+	      memset(RDStext, '\0', sizeof(RDStext));
 	    }
 	    if(rdsblockerror < 4){ // limit RDS data errors as we have no correction code
 	        // new data is 2 chars from block 3
